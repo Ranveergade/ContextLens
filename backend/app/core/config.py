@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # API Keys
     GEMINI_API_KEY: str = ""
     GROQ_API_KEY: str = ""
-    GEMMA_MODEL: str = "llama-3.3-70b-versatile"
+    GEMMA_MODEL: str = "llama-3.1-8b-instant"
     
     # Database
     DATABASE_URL: str = "sqlite:///./contextlens.db"

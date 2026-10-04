@@ -114,7 +114,7 @@ class GemmaService:
         }
         prompt = f"Document Filename: Document\n\nDocument Content:\n{document_text}\n\nProvide the structured JSON analysis."
         payload = {
-            "model": settings.GEMMA_MODEL or "llama-3.3-70b-versatile",
+            "model": settings.GEMMA_MODEL or "llama-3.1-8b-instant",
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt}

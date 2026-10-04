@@ -1,9 +1,9 @@
+/* Layout: Main App component - 3-zone layout (Navbar, Sidebar 20%, ContentArea 80%) with Lenis smooth scroll matching skills.md */
 import React, { useState, useEffect } from 'react';
+import Lenis from 'lenis';
 import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { UploadZone } from './components/UploadZone';
-import { ProcessingState } from './components/ProcessingState';
-import { AnalysisDashboard } from './components/AnalysisDashboard';
+import { Sidebar, MenuId } from './components/Sidebar';
+import { ContentArea } from './components/ContentArea';
 import { EvidenceModal } from './components/EvidenceModal';
 import { DocumentViewerModal } from './components/DocumentViewerModal';
 import { api } from './services/api';
@@ -11,14 +11,13 @@ import { DocumentItem, Analysis, SourceReference } from './types';
 import { AlertCircle } from 'lucide-react';
 
 export function App() {
+  const [activeMenu, setActiveMenu] = useState<MenuId>('overview');
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<string | undefined>();
   const [currentAnalysis, setCurrentAnalysis] = useState<Analysis | null>(null);
-  
+
   // Loading & Processing state
   const [isUploading, setIsUploading] = useState(false);
-  const [processingStep, setProcessingStep] = useState<'uploading' | 'parsing' | 'analyzing' | 'building'>('uploading');
-  const [processingFilename, setProcessingFilename] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Modal States
@@ -30,6 +29,24 @@ export function App() {
   const [viewerModalOpen, setViewerModalOpen] = useState(false);
   const [highlightText, setHighlightText] = useState<string | undefined>(undefined);
   const [highlightPage, setHighlightPage] = useState<number | undefined>(undefined);
+
+  // Initialize Lenis Smooth Scroll
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
 
   // Load document list on initial mount
   useEffect(() => {
@@ -67,22 +84,16 @@ export function App() {
   const handleFileUpload = async (file: File) => {
     setErrorMsg(null);
     setIsUploading(true);
-    setProcessingFilename(file.name);
-    setProcessingStep('uploading');
 
     try {
-      setProcessingStep('parsing');
       const doc = await api.uploadDocument(file);
       setDocuments(prev => [doc, ...prev]);
       setSelectedDocId(doc.id);
 
-      setProcessingStep('analyzing');
       const analysis = await api.analyzeDocument(doc.id);
-
-      setProcessingStep('building');
       setCurrentAnalysis(analysis);
       setIsUploading(false);
-
+      setActiveMenu('analysis');
       fetchDocuments();
     } catch (err: any) {
       setIsUploading(false);
@@ -162,75 +173,65 @@ SECTION 4: RISKS AND AMBIGUITIES
     setViewerModalOpen(true);
   };
 
-  const selectedDocument = documents.find(d => d.id === selectedDocId);
+  const currentDocument = documents.find(d => d.id === selectedDocId) || null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      
-      {/* Navigation */}
+    <div className="min-h-screen bg-white font-sans text-slate-900">
+      {/* 1. Navbar: Full width, 64px height, fixed */}
       <Navbar
         documents={documents}
         selectedDocId={selectedDocId}
         onSelectDoc={(id) => loadDocumentAnalysis(id)}
-        onNewUpload={() => {
-          setSelectedDocId(undefined);
-          setCurrentAnalysis(null);
-        }}
+        onOpenSettings={() => setActiveMenu('settings')}
       />
 
-      {/* Main Content Body */}
-      <main className="flex-1 pb-16">
-        
-        {/* Error Notification Banner */}
-        {errorMsg && (
-          <div className="max-w-4xl mx-auto my-4 px-4">
-            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-                <span>{errorMsg}</span>
-              </div>
-              <button
-                onClick={() => setErrorMsg(null)}
-                className="p-1 hover:bg-rose-500/20 rounded-md transition-colors"
-              >
-                Dismiss
-              </button>
-            </div>
-          </div>
-        )}
+      {/* Main Layout Container (starts below Navbar 64px) */}
+      <div className="flex pt-16">
+        {/* 2. Sidebar: Left 20% width (min 240px, max 320px) */}
+        <Sidebar
+          activeMenu={activeMenu}
+          onSelectMenu={(menuId) => setActiveMenu(menuId)}
+          documentCount={documents.length}
+          actionCount={currentAnalysis?.action_items.length || 0}
+          riskCount={currentAnalysis?.risks.length || 0}
+        />
 
-        {/* View 1: Processing / Scanner Loader */}
-        {isUploading ? (
-          <ProcessingState filename={processingFilename} step={processingStep} />
-        ) : currentAnalysis && selectedDocument ? (
-          /* View 2: Analysis Dashboard */
-          <AnalysisDashboard
-            document={selectedDocument}
-            analysis={currentAnalysis}
-            onToggleAction={handleToggleAction}
-            onProveIt={handleProveIt}
-            onViewDocumentFile={() => {
-              setHighlightText(undefined);
-              setHighlightPage(undefined);
-              setViewerModalOpen(true);
-            }}
-          />
-        ) : (
-          /* View 3: Landing / Hero & Upload Zone */
-          <div className="space-y-4">
-            <Hero
-              onStartUpload={() => window.scrollTo({ top: 300, behavior: 'smooth' })}
-              onTrySample={handleTrySample}
-            />
-            <UploadZone
-              onFileUpload={handleFileUpload}
-              onTrySample={handleTrySample}
-              isLoading={isUploading}
-            />
-          </div>
-        )}
+        {/* 3. ContentArea: Right 80% width */}
+        <ContentArea
+          activeMenu={activeMenu}
+          documents={documents}
+          currentDocument={currentDocument}
+          analysis={currentAnalysis}
+          isAnalyzing={isUploading}
+          onFileUpload={handleFileUpload}
+          onTrySample={handleTrySample}
+          onSelectDocument={(id) => loadDocumentAnalysis(id)}
+          onToggleAction={handleToggleAction}
+          onProveIt={handleProveIt}
+          onViewDocumentFile={() => {
+            setHighlightText(undefined);
+            setHighlightPage(undefined);
+            setViewerModalOpen(true);
+          }}
+          onHighlightInFile={handleHighlightInFile}
+        />
+      </div>
 
-      </main>
+      {/* Error notification banner */}
+      {errorMsg && (
+        <div className="fixed bottom-6 right-6 z-50 max-w-md p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs shadow-xl flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+            <span>{errorMsg}</span>
+          </div>
+          <button
+            onClick={() => setErrorMsg(null)}
+            className="ml-4 font-bold hover:text-red-900 cursor-pointer"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Modals */}
       <EvidenceModal
@@ -239,24 +240,19 @@ SECTION 4: RISKS AND AMBIGUITIES
         itemTitle={evidenceTitle}
         itemType={evidenceType}
         evidence={currentEvidence}
-        documentFilename={selectedDocument?.filename || 'Uploaded Document'}
+        documentFilename={currentDocument?.filename || 'Uploaded Document'}
         onHighlightInFile={handleHighlightInFile}
       />
 
       <DocumentViewerModal
         isOpen={viewerModalOpen}
         onClose={() => setViewerModalOpen(false)}
-        document={selectedDocument || null}
+        document={currentDocument}
         highlightText={highlightText}
         pageNumber={highlightPage}
       />
-
-      {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <p>ContextLens • Hackathon Prototype • Powered by Gemma 4 Intelligence</p>
-      </footer>
-
     </div>
   );
 }
+
 export default App;
