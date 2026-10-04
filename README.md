@@ -5,6 +5,10 @@
 ContextLens is a hackathon-ready, production-quality full-stack application that transforms complex documents (PDFs, Excel spreadsheets, images, text files) into a structured, actionable workspace with verifiable "PROVE IT" source evidence traceability.
 
 ---
+## live deployment:-
+
+link:- https://contextlens-liart.vercel.app/
+
 
 ## 1. Project Overview
 
