@@ -1,0 +1,31 @@
+CONTEXTLENS HACKATHON PROJECT SPECIFICATION
+Version: 1.0.4
+Target Release: Hackathon Final Submission
+
+OVERVIEW
+ContextLens is an AI-powered document intelligence workspace. The platform enables users to upload complex documents (PDFs, screenshots, text files), automatically extracts structured insights, and provides complete source evidence ("PROVE IT") for every AI claim.
+
+SECTION 1: CORE REQUIREMENTS
+1. The application must allow uploading PDF, PNG, JPG, and TXT files under 25MB.
+2. The AI backend shall process documents using Gemma 4 model architecture with strict structured outputs.
+3. Every extracted requirement, action item, risk, and question must maintain a traceable source reference citing page number and verbatim text snippet.
+4. The system must persist analysis results in SQLite/PostgreSQL and preserve completion status upon page refresh.
+5. Mobile responsive design is required across all primary dashboard views.
+
+SECTION 2: ACTION ITEMS & DELIVERABLES
+- Deliverable A: Public GitHub repository containing complete source code and documentation.
+- Deliverable B: 90-second video demo showing PDF upload, AI analysis generation, and "PROVE IT" evidence interaction.
+- Task 1: Complete FastAPI backend API endpoints for document management and action updates.
+- Task 2: Build modern Vite + React frontend with dark-mode UI and interactive evidence modal.
+- Task 3: Execute automated end-to-end integration test suite before final submission.
+
+SECTION 3: DEADLINES
+- Final Code Freeze: May 15, 2026 at 11:59 PM EST.
+- Video Demo Upload: May 16, 2026 at 10:00 AM EST.
+- Live Judging Presentation: May 17, 2026 at 2:00 PM EST.
+
+SECTION 4: RISKS AND AMBIGUITIES
+- Risk 1: Gemma API rate limiting during high concurrency judging window. Severity: High.
+- Risk 2: Parsing multi-column scanned PDF documents might produce fragmented text lines. Severity: Medium.
+- Question 1: Should we implement offline caching for processed documents?
+- Question 2: What is the maximum number of simultaneous document uploads permitted per user session?

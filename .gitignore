@@ -1,118 +1,73 @@
-# ============================================
-# ContextLens — .gitignore
-# ============================================
-
-# ---- Environment Variables ----
+# Environment variables & Secrets
 .env
 .env.local
 .env.*.local
 *.env
+*.pem
+*.key
 
-# ---- Python ----
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Virtual Environments
-venv/
-ENV/
-env/
-.venv/
-env.bak/
-venv.bak/
-
-# ---- FastAPI / Uvicorn ----
-*.log
-logs/
-
-# ---- SQLite Database ----
+# Database & Upload Storage
 *.db
 *.sqlite
 *.sqlite3
 contextlens.db
-contextlens.db-journal
+uploads/*
+!uploads/.gitkeep
 
-# ---- Uploaded Files ----
-uploads/
-backend/uploads/
-backend/static/uploads/
-*.pdf
-*.png
-*.jpg
-*.jpeg
-*.xlsx
-*.xls
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 
-# BUT keep test fixtures if needed
-!tests/test_documents/*.pdf
-!tests/test_documents/*.png
-
-# ---- Node / Frontend ----
+# Node.js & Dependencies
 node_modules/
+frontend/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
-# Frontend build
+# Frontend Build Outputs
+dist/
 frontend/dist/
+build/
 frontend/build/
-frontend/.vite/
-frontend/node_modules/
+.out/
 
-# Vite
-.vite/
-*.local
-
-# ---- IDE / Editor ----
-.vscode/
+# IDE & Editor files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
-*~
-.DS_Store
-Thumbs.db
+*.sublime-project
+*.sublime-workspace
 
-# ---- OS Files ----
+# OS & System files
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Desktop.ini
+Thumbs.db
 
-# ---- Testing / Coverage ----
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.hypothesis/
+# Windows / Local script wrappers
+powershell.cmd
+frontend/powershell.cmd
+backend/powershell.cmd
 
-# ---- Jupyter ----
-.ipynb_checkpoints/
-
-# ---- Misc ----
-*.bak
-*.tmp
-*.temp
-.cache/
+# Temporary test outputs
+test_sample.xlsx

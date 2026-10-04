@@ -1,0 +1,26 @@
+CONTEXTLENS HACKATHON PROJECT SPECIFICATION
+Version: 1.0.4
+Target Release: Hackathon Final Submission
+
+OVERVIEW
+ContextLens is an AI-powered document intelligence workspace.
+
+SECTION 1: CORE REQUIREMENTS
+1. The application must allow uploading PDF, PNG, JPG, and TXT files under 25MB.
+2. The AI backend shall process documents using Gemma 4 model architecture.
+3. Every extracted requirement must maintain a traceable source reference.
+
+SECTION 2: ACTION ITEMS & DELIVERABLES
+- Deliverable A: Public GitHub repository with complete source code.
+- Task 1: Complete FastAPI backend API endpoints.
+- Task 2: Build modern Vite + React frontend.
+
+SECTION 3: DEADLINES
+- Final Code Freeze: May 15, 2026 at 11:59 PM EST.
+- Video Demo Upload: May 16, 2026 at 10:00 AM EST.
+
+SECTION 4: RISKS AND AMBIGUITIES
+- Risk 1: Gemma API rate limiting. Severity: High.
+- Risk 2: Parsing multi-column scanned PDFs. Severity: Medium.
+- Question 1: Should we implement offline caching?
+- Question 2: What is the max simultaneous uploads?
